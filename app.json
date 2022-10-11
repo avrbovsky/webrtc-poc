@@ -12,7 +12,16 @@
       "backgroundColor": "#ffffff"
     },
     "plugins": [
-      "@config-plugins/react-native-webrtc"
+      "@config-plugins/react-native-webrtc",
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ],
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -23,7 +32,8 @@
     "ios": {
       "supportsTablet": true,
       "bitcode": false,
-      "bundleIdentifier": "com.example.webrtc"
+      "bundleIdentifier": "com.example.webrtc",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,6 +41,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.example.webrtc",
+      "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.BLUETOOTH",
@@ -44,6 +55,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "276d0569-96bf-4228-b37c-8c2a81137af4"
+      }
     }
   }
 }

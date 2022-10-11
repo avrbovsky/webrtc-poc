@@ -31,6 +31,12 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>com.googleusercontent.apps.999414993478-mr2qamcbu2eun7vf6dcuilnbo1jkcfg3</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
           <string>exp+webrtc-poc</string>
         </array>
       </dict>
