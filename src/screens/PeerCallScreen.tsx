@@ -17,7 +17,10 @@ import {
 } from 'react-native-webrtc';
 import firestore from '@react-native-firebase/firestore';
 
-const ICE_SERVER_URLS = ['stun:stun1.l.google.com:19302'];
+const ICE_SERVER_URLS = [
+  'stun:stun1.l.google.com:19302',
+  'stun:stun2.l.google.com:19302',
+];
 
 export default function CallScreen() {
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -37,8 +40,8 @@ export default function CallScreen() {
 
   const startWebcam = async () => {
     const local = await mediaDevices.getUserMedia({
-      video: true,
       audio: true,
+      video: true,
     });
 
     pc.current = new RTCPeerConnection(peerConnectionConfig);
@@ -80,7 +83,7 @@ export default function CallScreen() {
 
     const channelDoc = firestore().collection('channels').doc();
     const offerCandidates = channelDoc.collection('offerCandidates');
-    const answerCandidates = channelDoc.collection('answerCanidates');
+    const answerCandidates = channelDoc.collection('answerCandidates');
 
     setChannelId(channelDoc.id);
 

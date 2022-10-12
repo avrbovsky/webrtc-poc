@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import CallScreen from './src/screens/CallScreen';
-import PeerCallScreen from './src/screens/PeerCallScreen';
+import PeerCallScreen from './src/screens/PeerCallScreenNew';
 
 export default function App() {
   return (

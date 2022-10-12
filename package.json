@@ -19,7 +19,7 @@
     "react-firebase-hooks": "^5.0.3",
     "react-native": "0.69.6",
     "react-native-web": "~0.18.7",
-    "react-native-webrtc": "^1.106.1",
+    "react-native-webrtc": "1.106.1",
     "expo-build-properties": "~0.3.0"
   },
   "devDependencies": {
