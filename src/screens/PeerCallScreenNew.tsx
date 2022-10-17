@@ -26,7 +26,22 @@ const ICE_SERVER_URLS = [
 const peerConnectionConfig = {
   iceServers: [
     {
-      urls: ICE_SERVER_URLS,
+      urls: 'stun:openrelay.metered.ca:80',
+    },
+    {
+      urls: 'turn:openrelay.metered.ca:80',
+      username: 'openrelayproject',
+      credential: 'openrelayproject',
+    },
+    {
+      urls: 'turn:openrelay.metered.ca:443',
+      username: 'openrelayproject',
+      credential: 'openrelayproject',
+    },
+    {
+      urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+      username: 'openrelayproject',
+      credential: 'openrelayproject',
     },
   ],
   iceCandidatePoolSize: 10,
@@ -51,21 +66,31 @@ export default function CallScreen() {
   const [isWebcamStarted, setIsWebcamStarted] = useState(false);
 
   const initCall = async (mode: CallMode) => {
-    const _localStream = await mediaDevices.getUserMedia({
+    const _localStream = (await mediaDevices.getUserMedia({
       audio: true,
       video: true,
-    });
+    })) as MediaStream;
 
     const _remoteStream = new MediaStream(undefined);
 
     localStream?.getTracks().forEach((track) => {
+      console.info('Init - addTrack', track);
       pc.addTrack(track);
     });
 
     pc.ontrack = (e: RTCTrackEvent) => {
+      console.info('Init - onTrack', _remoteStream);
       e.streams[0].getTracks().forEach((track: MediaStreamTrack) => {
         _remoteStream.addTrack(track);
       });
+      setRemoteStream(_remoteStream);
+    };
+
+    pc.oniceconnectionstatechange = () => {
+      console.info(
+        'Init - onIceConnectionStateChange: ',
+        pc.iceConnectionState
+      );
     };
 
     setLocalStream(_localStream);
@@ -88,6 +113,7 @@ export default function CallScreen() {
     setChannelId(channelDoc.id);
 
     pc.onicecandidate = (e: RTCPeerConnectionIceEvent) => {
+      console.info('Call - onIceCandidate: ', e.candidate?.toJSON());
       if (e.candidate) {
         offerCandidates.add(e.candidate.toJSON());
       }
@@ -130,6 +156,7 @@ export default function CallScreen() {
     const offerCandidates = callDoc.collection('offerCandidates');
 
     pc.onicecandidate = (e: RTCPeerConnectionIceEvent) => {
+      console.info('Join - ICE state: ', e.candidate?.toJSON());
       if (e.candidate) {
         answerCandidates.add(e.candidate.toJSON());
       }
@@ -161,6 +188,7 @@ export default function CallScreen() {
     });
 
     pc.onconnectionstatechange = () => {
+      console.info('Join - onConnectionStateChange', pc.connectionState);
       if (pc.connectionState === 'disconnected') {
         hangUp();
       }
@@ -189,6 +217,11 @@ export default function CallScreen() {
 
       await channelDoc.delete();
     }
+
+    setChannelId(null);
+    setIsWebcamStarted(false);
+    setLocalStream(null);
+    setRemoteStream(null);
   };
 
   return (
@@ -219,18 +252,18 @@ export default function CallScreen() {
           </View>
         )}
 
-        {localStream && (
+        {remoteStream && (
           <RTCView
-            streamURL={localStream?.toURL()}
+            streamURL={remoteStream.toURL()}
             style={styles.rtc}
             objectFit="cover"
             mirror
           />
         )}
 
-        {remoteStream && (
+        {localStream && (
           <RTCView
-            streamURL={remoteStream?.toURL()}
+            streamURL={localStream?.toURL()}
             style={styles.rtc}
             objectFit="cover"
             mirror
@@ -287,7 +320,6 @@ const styles = StyleSheet.create({
   footer: {
     position: 'absolute',
     bottom: 0,
-    // height: 150,
     width: '100%',
     backgroundColor: 'white',
     padding: 6,

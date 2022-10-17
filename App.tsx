@@ -5,7 +5,7 @@ import PeerCallScreen from './src/screens/PeerCallScreenNew';
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} >
       <StatusBar style="auto" />
       {/* <CallScreen /> */}
       <PeerCallScreen />
